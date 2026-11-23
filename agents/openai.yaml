@@ -1,9 +1,9 @@
 interface:
-  display_name: Amazon Listing 改写
-  short_description: 按买家问句诊断和改写 Amazon Listing，逐条核对事实并对比改写前后。
-  default_prompt: 用 $amazon-listing-rewrite 根据我提供的型号、原文和买家问题诊断并改写五点。
-  icon_small: assets/icon.svg
-  icon_large: assets/icon.svg
+  display_name: "Amazon Listing 改写"
+  short_description: "用 ASIN 识别商品，选择 Listing 评分、Alexa 问句改写或竞品功能调研。"
+  default_prompt: "用 $amazon-listing-rewrite 查询我提供的 ASIN，展示商品身份与评分、改写和调研入口。"
+  icon_small: "assets/icon.svg"
+  icon_large: "assets/icon.svg"
 policy:
   products:
   - chatgpt
