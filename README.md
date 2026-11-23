@@ -1,84 +1,81 @@
-# Amazon Listing 改写 Skill
+# Amazon Listing Rewrite Skill
 
-把 Amazon 商品标题、Item Highlights、五点、A+ 或商品描述交给 AI。它会找出哪些买家问题没有说清楚，引用对应原文，给出建议改写和理由，再用同一批问题复评。可以只改一条五点，也可以处理整份 Listing。任何类目都能从已经提供的内容开始。
+**A free AI agent skill for Amazon sellers to audit listing copy, rewrite for Alexa for Shopping buyer questions, and compare competitor features.**
 
-[打开 Skill 指令](SKILL.md) · [打开 Amazon Listing 工作台](https://github.com/kurikiwoods-coder/amazon-listing-workbench)
+[简体中文](docs/zh-CN/README.md) · [Examples](docs/en/EXAMPLES.md) · [Claude setup](docs/en/CLAUDE-USAGE.md) · [Product requirements](docs/en/REQUIREMENTS.md) · [Listing Workbench](https://github.com/kurikiwoods-coder/amazon-listing-workbench)
 
-## 按 ASIN 开始
+## What you can do
 
-直接发送一个 ASIN 或 Amazon 商品链接。若当前 AI 有联网能力，它会查找匹配的商品，列出站点、选中的变体、数据来源、读取日期和可用字段。只给 ASIN 时先沿用当前对话站点，没有站点就从美国站开始。遇到访问限制时，可用同站点归档或上传原文继续。
+Start with an ASIN, an Amazon product URL, or the copy you already have. When a web tool can read the matching detail page, the skill checks the marketplace, child ASIN, model, and variant. An ASIN alone opens a three-option menu after lookup. Include the task in your message to go straight to it.
 
-| 选择 | 可以直接发给 AI 的请求 | 结果 |
+| Workflow | Question it helps answer | What you get |
 | --- | --- | --- |
-| 1 · Listing 评分 | `查这个 ASIN，只给已取得的字段打分，指出最值得改的三处。` | 各字段分、总分、原文引文、修改意见和长度检查。可另查前台可售状况。 |
-| 2 · Alexa 问句导向改写 | `只改第 2 条五点。买家想知道盖子能否锁紧。对照原文，保留操作条件，给我英文稿。` | 按目标站点语言改写，逐条给出依据、前后长度、待核项和问句复评。 |
-| 3 · 市场调研 | `在同站点找 3 款可替代产品。列出是否有锁扣、怎么锁、对应买家问句和各页面的可回答性分。` | 竞品功能矩阵、来源、问句与覆盖分。若上传 Alexa 实测记录，还能核对实际回答。 |
+| **1. Listing audit** | Which part of this listing should I review first? | Field-by-field copy scores, short quotes, and up to three priority fixes tied to specific fields. |
+| **2. Alexa question-led rewrite** | Can a buyer tell how a feature works and when it applies? | Edited copy in the marketplace language, a before-and-after comparison, verified usage conditions, and field-length checks. |
+| **3. Competitor research** | Which comparable products support the feature, and how clearly does each listing explain it? | A same-marketplace comparison of features, evidence, buyer questions, and how well each listing answers them. |
 
-可以组合，例如 `查这个 ASIN，先评分，再针对最严重的问题只改一条五点。` 仍支持只粘贴原文。免费 Oxylabs 类目 CSV 可用来挑竞品，详细五点、A+ 和后台字段需要各自的资料。
+## Quick start
 
-## 1. 直接给 AI 用
-
-1. 下载 [SKILL.md](SKILL.md) 并上传给 AI，也可以把文件全文粘贴进对话。
-2. 上传或粘贴要改的 Listing 原文。已知时，附上站点、ASIN、精确型号或变体、已确认事实及来源。手头有真实买家问句或 Alexa 实测问句，也一起给出。
-3. 发送下面的请求。只有一条英文原文时，先从这一条开始。
-
-```text
-请按 SKILL.md 诊断、改写并复核我提供的 Listing。
-站点：Amazon US
-型号或 ASIN：[填写已知信息]
-改写范围：只改第 1 条五点
-原文：[粘贴原文]
-已确认事实及来源：[例如产品说明书「首次设置」一节]
-优先回答的买家问题：[粘贴真实问句，有则提供]
-
-请先指出卡住购买判断的地方，给出原文引文、英文改写和中文修改理由。
-用同一问题对照改写前后的可回答性，最后给我可复制的候选文案。
-```
-
-如果只提供 ASIN 或链接，AI 能读取的内容取决于当前工具和访问权限。网页无法读取或变体无法核对时，粘贴对应型号的原文、上传截图或使用工作台导出。
-
-## 2. 从工作台接着改
-
-1. 在 [Amazon Listing 工作台](https://github.com/kurikiwoods-coder/amazon-listing-workbench) 打开 ASIN 项目，进入 **Listing 诊断 → 导出 Alexa Skill 输入**。
-2. 将导出的 Markdown 与 Skill 一起交给 AI。导出可提供 Listing 快照、字段核验状态、产品事实、买家问句和诊断引文。
-3. 核对 AI 给出的原文位置、英文候选稿和待核实事项。把通过核对的候选稿带回工作台，保存版本并复评。
-
-两个仓库通过文档互链。工作台与 AI 对话之间使用 Markdown 导出和人工回填。
-
-## 3. 加载为可重复调用的 Skill
-
-| 使用环境 | 操作 |
+| Where you work | How to use it |
 | --- | --- |
-| ChatGPT 的 Skills 功能 | 如果账号可用，在 **Plugins → Skills** 中查找已安装的 `amazon-listing-rewrite`，也可从 **Create → Upload from your computer** 使用本仓库的 Skill 文件。 |
-| Codex | 将 `SKILL.md`、`agents/`、`assets/` 和 `scripts/` 保持相对位置，放入当前项目的 `.agents/skills/amazon-listing-rewrite/`，或本人目录的 `~/.agents/skills/amazon-listing-rewrite/`。打开该项目后，用 `$amazon-listing-rewrite` 开始请求。 |
-| 普通 AI 聊天 | 每次新开对话时上传 `SKILL.md` 或粘贴全文，再提供原文与依据信息。 |
+| **ChatGPT** | If Skills is available in your workspace, open **Plugins → Skills** and select the installed skill. To add a copy, use **Create → Upload from your computer**. [ChatGPT Skills help](https://help.openai.com/en/articles/20001066-skills-in-chatgpt) |
+| **Codex** | Copy `SKILL.md`, `scripts/`, `agents/`, and `assets/` into `.agents/skills/amazon-listing-rewrite/` in your project or `~/.agents/skills/amazon-listing-rewrite/` for personal use. Invoke it with `$amazon-listing-rewrite`. [Codex Skills documentation](https://learn.chatgpt.com/docs/build-skills) |
+| **Claude Code or Claude web app** | Use the local Skill folder in Claude Code or upload a ZIP to Claude. The setup guide includes the metadata and folder layout for each. [Claude setup](docs/en/CLAUDE-USAGE.md) |
+| **A regular AI chat** | Attach `SKILL.md` or paste its contents, then send the listing and supporting facts. [Skill instructions](SKILL.md) |
 
-[ChatGPT Skills 帮助](https://help.openai.com/en/articles/20001066-skills-in-chatgpt) · [Codex Skills 文档](https://learn.chatgpt.com/docs/build-skills)
+Try either of these prompts. The skill explains its findings in Simplified Chinese by default. Ask for an English report if you prefer.
 
-## 4. 改写和复评规则
+~~~text
+Look up this Amazon US ASIN [ASIN]. Audit the fields you can verify and show the top three fixes. Give me the report in English.
+~~~
 
-| 规则 | 怎么处理 |
+~~~text
+Rewrite only Bullet 1 for Amazon US. Buyers ask whether they can see protein with the app closed. I'll provide the current bullet and the setup instructions. Show the old and new text, explain the change, and check its length.
+~~~
+
+The worked example includes complete input, candidate copy, and a before-and-after check. [Examples](docs/en/EXAMPLES.md)
+
+## Data and marketplaces
+
+| What you have | How it is used |
 | --- | --- |
-| 先解决购买疑问 | 优先使用真实问句。缺少问句时，从已有文案拟定 3–5 个购买问题并标明来源。每项诊断给出字段、原文引文和影响。 |
-| 以同一型号的事实为准 | 保留适用范围、参数和限制。原文中尚无依据的声明标为待核实。评论、竞品、其他变体和 AI 回答可用于发现问题。 |
-| 按字段改 | 标题明确商品身份，Item Highlights 补充决策信息，五点逐条回答购买问题，A+ 或描述交代操作和使用边界。用户只指定一个字段时，改写范围跟随指定字段。 |
-| 按实际原文评分 | 用户要求评分时，每个已提供的模块按直接回答、具体性、事实与边界、清晰与去重各 25 分。总分取已评分模块平均，缺失项标为未评分。总分差只比较共同模块。 |
-| 复核规则与事实 | 字符数、用语和格式按适用站点、类目和生效规则核对。规则或资料还未确认时，列出具体核验项。后台 Search Terms 在用户要求时给备选。 |
+| **Amazon URL or ASIN** | The URL identifies the marketplace. A bare ASIN uses the conversation's marketplace or starts with Amazon US, with the default stated in the report. Live lookup uses the host's available web tools and depends on page access. |
+| **Copy, saved HTML, screenshots, manuals, or workbench export** | Work from the fields and product facts you can supply. A single bullet is enough for a targeted edit. |
+| **Oxylabs category CSV** | Find candidate ASINs and listing URLs. Verify the product detail copy and specifications separately before auditing or comparing features. [Oxylabs project](https://github.com/oxylabs/amazon-scraper) |
+| **Alexa test records** | Compare observed answers against verified product facts and record citations and product cards. A new test plan can be generated from supplied buyer questions. |
 
-## 5. 如何看结果
+Audit scores cover fields with source copy. A rewrite preserves verified specifications, setup steps, and limitations. Length checks use the applicable marketplace, category, and field or A+ module. If a limit is unavailable, the report gives the measured length and flags the rule for review.
 
-输出依次给出优先问题、原文和建议改写对照、可复制候选稿，以及同一组问句的前后判断。解释默认用简体中文，候选文案使用目标站点语言。
+## Listing Workbench
 
-例如，若已核实某演示营养秤要先在 App 保存食物，之后选中已保存的食物才能在秤屏看热量，草稿就应明确这两个阶段。蓝牙断开与断网使用的能力分别留待核验。这个例子只演示如何保留条件，实际改写以目标型号资料为准。
+In a workbench ASIN project, open **Listing Diagnostics → 导出 Alexa Skill 输入** to export the current copy, known facts, buyer questions, and audit evidence as Markdown. Give the export to the skill, review the proposed copy, and save the accepted version in the workbench for reassessment. [Amazon Listing Workbench](https://github.com/kurikiwoods-coder/amazon-listing-workbench)
 
-候选稿由运营核对后人工发布。文案复评分用于对照表达改善。需要了解实际 Alexa for Shopping 表现时，在相同站点、入口和问句条件下分别记录回答、引用和目标商品卡。
+## Repository guide
 
-## 长度检查
+| Path | Contents |
+| --- | --- |
+| [SKILL.md](SKILL.md) | Agent instructions for lookup, audit, rewrite, and research. |
+| [scripts/measure_fields.py](scripts/measure_fields.py) | Standard-library Python counter for characters or UTF-8 bytes. |
+| [agents/](agents/) and [assets/](assets/) | OpenAI interface metadata and the skill icon. |
+| [docs/en/](docs/en/) | English examples, Claude setup, and product requirements. |
+| [docs/zh-CN/](docs/zh-CN/) | Chinese README and matching Chinese guides. |
 
-逐项检查标题、独立 Item Highlights、每条五点、描述和每个 A+ 文本框。Search Terms 依据适用规则计字符或 UTF-8 字节。规则口径随站点、类目和模板变化；未知时报告实际长度和待核状态。可将字段文本作为 JSON 数组交给 [计数脚本](scripts/measure_fields.py)，具体输入见 [SKILL.md](SKILL.md)。
+| Guide | English | 简体中文 |
+| --- | --- | --- |
+| Examples | [EXAMPLES.md](docs/en/EXAMPLES.md) | [EXAMPLES.md](docs/zh-CN/EXAMPLES.md) |
+| Claude setup | [CLAUDE-USAGE.md](docs/en/CLAUDE-USAGE.md) | [CLAUDE-USAGE.md](docs/zh-CN/CLAUDE-USAGE.md) |
+| Product requirements | [REQUIREMENTS.md](docs/en/REQUIREMENTS.md) | [REQUIREMENTS.md](docs/zh-CN/REQUIREMENTS.md) |
 
-## 仓库文件
+## FAQ
 
-- [SKILL.md](SKILL.md) 是 AI 执行指令。
-- [agents/openai.yaml](agents/openai.yaml) 是调用界面配置。
-- [assets/icon.svg](assets/icon.svg) 是 Skill 图标。
+**Do I need an API key?** Supplied copy and evidence can be analyzed without a marketplace API key. Web lookup and optional data-provider access depend on your agent and account.
+
+**What if only some fields are visible?** Provide a listing snapshot, Seller Central export, or the individual text you want reviewed. Missing fields appear as unscored.
+
+**What does the Alexa workflow check?** It checks whether the listing answers the buyer's question, then shows which sentence supports each answer. Actual Alexa answers and product cards can be reviewed from test records you supply.
+
+## References
+
+The listing methodology draws on buyer-question coverage, storefront health checks, and competitor discovery. The project documentation is organized around seller use cases and common workflows.
+
+[Alexa Listing Optimizer](https://github.com/liangdabiao/amazon-listing-alexa-optimizer) · [Zach's Amazon Skills](https://github.com/zach22-1999/amazon-skills) · [Amazon Sorftime MCP Skills](https://github.com/liangdabiao/amazon-sorftime-research-MCP-skill) · [Nexscope Amazon Skills](https://github.com/nexscope-ai/Amazon-Skills)
