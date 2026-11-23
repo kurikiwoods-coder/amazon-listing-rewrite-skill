@@ -4,6 +4,18 @@
 
 [打开 Skill 指令](SKILL.md) · [打开 Amazon Listing 工作台](https://github.com/kurikiwoods-coder/amazon-listing-workbench)
 
+## 按 ASIN 开始
+
+直接发送一个 ASIN 或 Amazon 商品链接。若当前 AI 有联网能力，它会查找匹配的商品，列出站点、选中的变体、数据来源、读取日期和可用字段。只给 ASIN 时先沿用当前对话站点，没有站点就从美国站开始。遇到访问限制时，可用同站点归档或上传原文继续。
+
+| 选择 | 可以直接发给 AI 的请求 | 结果 |
+| --- | --- | --- |
+| 1 · Listing 评分 | `查这个 ASIN，只给已取得的字段打分，指出最值得改的三处。` | 各字段分、总分、原文引文、修改意见和长度检查。可另查前台可售状况。 |
+| 2 · Alexa 问句导向改写 | `只改第 2 条五点。买家想知道盖子能否锁紧。对照原文，保留操作条件，给我英文稿。` | 按目标站点语言改写，逐条给出依据、前后长度、待核项和问句复评。 |
+| 3 · 市场调研 | `在同站点找 3 款可替代产品。列出是否有锁扣、怎么锁、对应买家问句和各页面的可回答性分。` | 竞品功能矩阵、来源、问句与覆盖分。若上传 Alexa 实测记录，还能核对实际回答。 |
+
+可以组合，例如 `查这个 ASIN，先评分，再针对最严重的问题只改一条五点。` 仍支持只粘贴原文。免费 Oxylabs 类目 CSV 可用来挑竞品，详细五点、A+ 和后台字段需要各自的资料。
+
 ## 1. 直接给 AI 用
 
 1. 下载 [SKILL.md](SKILL.md) 并上传给 AI，也可以把文件全文粘贴进对话。
@@ -38,7 +50,7 @@
 | 使用环境 | 操作 |
 | --- | --- |
 | ChatGPT 的 Skills 功能 | 如果账号可用，在 **Plugins → Skills** 中查找已安装的 `amazon-listing-rewrite`，也可从 **Create → Upload from your computer** 使用本仓库的 Skill 文件。 |
-| Codex | 将 `SKILL.md`、`agents/` 和 `assets/` 保持相对位置，放入当前项目的 `.agents/skills/amazon-listing-rewrite/`，或本人目录的 `~/.agents/skills/amazon-listing-rewrite/`。打开该项目后，用 `$amazon-listing-rewrite` 开始请求。 |
+| Codex | 将 `SKILL.md`、`agents/`、`assets/` 和 `scripts/` 保持相对位置，放入当前项目的 `.agents/skills/amazon-listing-rewrite/`，或本人目录的 `~/.agents/skills/amazon-listing-rewrite/`。打开该项目后，用 `$amazon-listing-rewrite` 开始请求。 |
 | 普通 AI 聊天 | 每次新开对话时上传 `SKILL.md` 或粘贴全文，再提供原文与依据信息。 |
 
 [ChatGPT Skills 帮助](https://help.openai.com/en/articles/20001066-skills-in-chatgpt) · [Codex Skills 文档](https://learn.chatgpt.com/docs/build-skills)
@@ -60,6 +72,10 @@
 例如，若已核实某演示营养秤要先在 App 保存食物，之后选中已保存的食物才能在秤屏看热量，草稿就应明确这两个阶段。蓝牙断开与断网使用的能力分别留待核验。这个例子只演示如何保留条件，实际改写以目标型号资料为准。
 
 候选稿由运营核对后人工发布。文案复评分用于对照表达改善。需要了解实际 Alexa for Shopping 表现时，在相同站点、入口和问句条件下分别记录回答、引用和目标商品卡。
+
+## 长度检查
+
+逐项检查标题、独立 Item Highlights、每条五点、描述和每个 A+ 文本框。Search Terms 依据适用规则计字符或 UTF-8 字节。规则口径随站点、类目和模板变化；未知时报告实际长度和待核状态。可将字段文本作为 JSON 数组交给 [计数脚本](scripts/measure_fields.py)，具体输入见 [SKILL.md](SKILL.md)。
 
 ## 仓库文件
 
